@@ -1,6 +1,8 @@
+import 'package:block/Bloc/calculation_bloc.dart';
 import 'package:block/details.dart';
 import 'package:block/dummy_product_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductList extends StatelessWidget {
   @override
@@ -24,7 +26,15 @@ class ProductList extends StatelessWidget {
               Positioned(
                 child: CircleAvatar(
                   radius: 10,
-                  child: Text("0"),
+                  child: BlocBuilder<CalculationBloc, CalculationState>(
+                    bloc: BlocProvider.of<CalculationBloc>(context),
+                    builder: (context, state) {
+                      if (state is Success && state.cartElement.length > 0) {
+                        return Text("${state.cartElement.length}");
+                      }
+                      return Text("0");
+                    },
+                  ),
                 ),
               ),
             ],
@@ -51,9 +61,32 @@ class ProductList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(onPressed: () {}, icon: Icon(Icons.add)),
                           IconButton(
-                              onPressed: () {}, icon: Icon(Icons.minimize)),
+                              onPressed: () {
+                                BlocProvider.of<CalculationBloc>(context).add(
+                                    AddItemToCart(
+                                        product: Product(
+                                            price: DummyProductList
+                                                .products[index].price,
+                                            name: DummyProductList
+                                                .products[index].name
+                                                .toString(),
+                                            image: '')));
+                              },
+                              icon: Icon(Icons.add)),
+                          IconButton(
+                              onPressed: () {
+                                BlocProvider.of<CalculationBloc>(context).add(
+                                    RemoveFromCart(
+                                        product: Product(
+                                            price: DummyProductList
+                                                .products[index].price,
+                                            name: DummyProductList
+                                                .products[index].name
+                                                .toString(),
+                                            image: '')));
+                              },
+                              icon: Icon(Icons.minimize)),
                         ],
                       ),
                     ),
