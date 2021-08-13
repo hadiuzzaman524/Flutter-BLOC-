@@ -45,9 +45,31 @@ class CalculationBloc extends Bloc<CalculationEvent, CalculationState> {
       _cartItem = List.unmodifiable(temp);
 
       yield Success(cartElement: _cartItem);
-
     } else if (event is RemoveFromCart) {
-      print("remove cart");
+      List<CartItem> temp = List<CartItem>.from(_cartItem);
+      int index = 0;
+      bool flag = false;
+
+      for (int i = 0; i < _cartItem.length; i++) {
+        if (temp[i].product.name == event.product.name) {
+          flag = true;
+          index = i;
+          break;
+        }
+      }
+      if (flag) {
+        if (temp[index].quantity == 1) {
+          temp.removeAt(index);
+        } else if (temp[index].quantity == 0) {
+          print("No item");
+        } else {
+          temp[index] = CartItem(
+              product: temp[index].product, quantity: temp[index].quantity - 1);
+        }
+
+        _cartItem=List.unmodifiable(temp);
+        yield Success(cartElement: _cartItem);
+      }
     }
   }
 }
