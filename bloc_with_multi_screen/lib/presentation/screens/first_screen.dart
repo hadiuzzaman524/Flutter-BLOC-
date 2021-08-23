@@ -1,4 +1,5 @@
 import 'package:bloc_with_multi_screen/business_logic/cubit/counter_cubit.dart';
+import 'package:bloc_with_multi_screen/presentation/screens/second_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,10 +14,12 @@ class HomePage extends StatelessWidget {
       ),
       body: BlocListener<CounterCubit, CounterState>(
         listener: (context, state) {
-          if(state.isPlush){
-            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Increment: ${state.counter}")));
-          }else{
-            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Decrement: ${state.counter}")));
+          if (state.isPlush) {
+            Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text("Increment: ${state.counter}")));
+          } else {
+            Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text("Decrement: ${state.counter}")));
           }
         },
         child: Container(
@@ -40,12 +43,14 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   FloatingActionButton(
+                    heroTag: "button1",
                     onPressed: () {
                       BlocProvider.of<CounterCubit>(context).increment();
                     },
                     child: Icon(Icons.add),
                   ),
                   FloatingActionButton(
+                    heroTag: "button2",
                     onPressed: () {
                       BlocProvider.of<CounterCubit>(context).decrement();
                     },
@@ -54,7 +59,15 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (ctx) =>
+                          BlocProvider.value(
+                            value: BlocProvider.of<CounterCubit>(context),
+                            child: SecondPage(),
+                          )
+                  ));
+                },
                 child: Container(color: Colors.red, child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
